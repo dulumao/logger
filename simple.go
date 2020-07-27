@@ -11,7 +11,6 @@ import (
 
 	"github.com/ansel1/merry"
 	"github.com/davecgh/go-spew/spew"
-	"github.com/pkg/errors"
 )
 
 type LogLevel int
@@ -237,17 +236,22 @@ func (l Logger) Message(isIncoming bool, message string) {
 func Wrap(err error) error {
 	pc, filename, linenr, _ := runtime.Caller(1)
 
-	return errors.Wrapf(err, "\n\nerror in function[%s] file[%s] line[%d]", runtime.FuncForPC(pc).Name(), filename, linenr)
+	return merry.Here(err).WithMessagef("\n\nerror in function[%s] file[%s] line[%d]", runtime.FuncForPC(pc).Name(), filename, linenr)
 }
 
 func WrapDebug(err error, vars ...interface{}) error {
 	pc, filename, linenr, _ := runtime.Caller(1)
-	return errors.Wrapf(err, `
+
+	return merry.Here(err).WithMessagef(`
 error in function[%s] file[%s] line[%d]
-↓↓↓ Debug variables below ↓↓↓
+↓↓↓ Debug variables ↓↓↓
 --------------------------------------------------------------------------------
 %s--------------------------------------------------------------------------------
 cause of error`, runtime.FuncForPC(pc).Name(), filename, linenr, spew.Sdump(vars...))
+}
+
+func DDStdout(vars ...interface{}) {
+	DumpVars(os.Stdout, vars...)
 }
 
 func Dump(w io.Writer, err error) {
@@ -258,7 +262,7 @@ func DumpVars(w io.Writer, vars ...interface{}) {
 	pc, filename, linenr, _ := runtime.Caller(1)
 	fmt.Fprintf(w, `
 function[%s] file[%s] line[%d]
-↓↓↓ Debug variables below ↓↓↓
+↓↓↓ Debug variables ↓↓↓
 --------------------------------------------------------------------------------
 %s--------------------------------------------------------------------------------
 `, runtime.FuncForPC(pc).Name(), filename, linenr, spew.Sdump(vars...))
@@ -269,7 +273,7 @@ func WrapReturn(err error) func() error {
 		if err != nil {
 			pc, filename, linenr, _ := runtime.Caller(0)
 
-			return errors.Wrapf(err, "\n\nerror in function[%s] file[%s] line[%d]", runtime.FuncForPC(pc).Name(), filename, linenr)
+			return merry.Here(err).WithMessagef("\n\nerror in function[%s] file[%s] line[%d]", runtime.FuncForPC(pc).Name(), filename, linenr)
 		}
 
 		return nil
@@ -281,7 +285,8 @@ func WrapReturnMulti(err *error) func() {
 	return func() {
 		if *err != nil {
 			pc, filename, linenr, _ := runtime.Caller(0)
-			*err = errors.Wrapf(*err, "\n\nerror in function[%s] file[%s] line[%d]", runtime.FuncForPC(pc).Name(), filename, linenr)
+
+			*err = merry.Here(*err).WithMessagef("\n\nerror in function[%s] file[%s] line[%d]", runtime.FuncForPC(pc).Name(), filename, linenr)
 
 			return
 		}

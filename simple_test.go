@@ -1,14 +1,18 @@
 package logger
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"testing"
 
 	"github.com/ansel1/merry"
-	"github.com/pkg/errors"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
+
+func TestFunc(t *testing.T) {
+	DDStdout("哈哈", "hehe")
+}
 
 func TestSimple(t *testing.T) {
 	const DEBUG = true
@@ -64,7 +68,6 @@ func TestSimple(t *testing.T) {
 }
 
 func testError() error {
-	return errors.Wrap(errors.New("出错了"), "read failed")
 	return merry.Wrap(errors.New("出错了"))
 	return merry.UserError("出错了")
 }

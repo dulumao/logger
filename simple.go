@@ -251,7 +251,13 @@ cause of error`, runtime.FuncForPC(pc).Name(), filename, linenr, spew.Sdump(vars
 }
 
 func DDStdout(vars ...interface{}) {
-	DumpVars(os.Stdout, vars...)
+	pc, filename, linenr, _ := runtime.Caller(1)
+	fmt.Fprintf(os.Stdout, `
+function[%s] file[%s] line[%d]
+↓↓↓ Debug variables ↓↓↓
+--------------------------------------------------------------------------------
+%s--------------------------------------------------------------------------------
+`, runtime.FuncForPC(pc).Name(), filename, linenr, spew.Sdump(vars...))
 }
 
 func Dump(w io.Writer, err error) {

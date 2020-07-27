@@ -11,7 +11,7 @@ import (
 )
 
 func TestFunc(t *testing.T) {
-	DDStdout("哈哈", "hehe")
+	DDStdout("哈哈", "hehe",errors.New("出错了"))
 }
 
 func TestSimple(t *testing.T) {

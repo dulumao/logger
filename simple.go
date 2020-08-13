@@ -283,9 +283,9 @@ function[%s] file[%s] line[%d]
 
 	for _, v := range i {
 		if s, err := formatter.Marshal(v); err == nil {
-			fmt.Fprintf(os.Stdout, string(s))
+			fmt.Fprintln(os.Stdout, string(s))
 		} else {
-			fmt.Fprintf(os.Stdout, "%s", err.Error())
+			fmt.Fprintln(os.Stdout, "%s", err.Error())
 		}
 		//buffer := &bytes.Buffer{}
 		//encoder := json.NewEncoder(buffer)

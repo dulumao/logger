@@ -263,18 +263,29 @@ function[%s] file[%s] line[%d]
 
 // JSStdout json dump
 func JSStdout(i ...interface{}) {
-	var formatter = prettyjson.NewFormatter()
+	pc, filename, linenr, _ := runtime.Caller(1)
+	formatter := prettyjson.NewFormatter()
 
-	fmt.Println()
+	fmt.Fprintf(os.Stdout, `
+function[%s] file[%s] line[%d]
+↓↓↓ Debug variables ↓↓↓
+--------------------------------------------------------------------------------
+`, runtime.FuncForPC(pc).Name(), filename, linenr)
+
+	//formatter.KeyColor = color.New(color.FgWhite)
+	//formatter.StringColor = color.New(color.FgGreen)
+	//formatter.BoolColor = color.New(color.FgYellow)
+	//formatter.NumberColor = color.New(color.FgCyan)
+	//formatter.NullColor = color.New(color.FgMagenta)
 
 	formatter.Indent = 4
 	formatter.DisabledColor = false
 
 	for _, v := range i {
 		if s, err := formatter.Marshal(v); err == nil {
-			fmt.Print(string(s))
+			fmt.Fprintf(os.Stdout, string(s))
 		} else {
-			fmt.Errorf("%s", err.Error())
+			fmt.Fprintf(os.Stdout, "%s", err.Error())
 		}
 		//buffer := &bytes.Buffer{}
 		//encoder := json.NewEncoder(buffer)
@@ -287,7 +298,7 @@ func JSStdout(i ...interface{}) {
 		//}
 	}
 
-	fmt.Println()
+	fmt.Fprintf(os.Stdout, `--------------------------------------------------------------------------------`)
 }
 
 func Dump(w io.Writer, err error) {

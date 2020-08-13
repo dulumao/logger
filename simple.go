@@ -268,6 +268,7 @@ func JSStdout(i ...interface{}) {
 	fmt.Println()
 
 	formatter.Indent = 4
+	formatter.DisabledColor = false
 
 	for _, v := range i {
 		if s, err := formatter.Marshal(v); err == nil {

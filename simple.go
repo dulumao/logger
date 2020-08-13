@@ -11,6 +11,7 @@ import (
 
 	"github.com/ansel1/merry"
 	"github.com/davecgh/go-spew/spew"
+	"github.com/fatih/color"
 	"github.com/hokaccha/go-prettyjson"
 )
 
@@ -272,11 +273,11 @@ function[%s] file[%s] line[%d]
 --------------------------------------------------------------------------------
 `, runtime.FuncForPC(pc).Name(), filename, linenr)
 
-	//formatter.KeyColor = color.New(color.FgWhite)
-	//formatter.StringColor = color.New(color.FgGreen)
-	//formatter.BoolColor = color.New(color.FgYellow)
-	//formatter.NumberColor = color.New(color.FgCyan)
-	//formatter.NullColor = color.New(color.FgMagenta)
+	formatter.KeyColor = color.New(color.FgWhite)
+	formatter.StringColor = color.New(color.FgGreen)
+	formatter.BoolColor = color.New(color.FgYellow)
+	formatter.NumberColor = color.New(color.FgCyan)
+	formatter.NullColor = color.New(color.FgMagenta)
 
 	formatter.Indent = 4
 	formatter.DisabledColor = false
@@ -298,7 +299,7 @@ function[%s] file[%s] line[%d]
 		//}
 	}
 
-	fmt.Fprintf(os.Stdout, `--------------------------------------------------------------------------------`)
+	fmt.Fprintln(os.Stdout, `--------------------------------------------------------------------------------`)
 }
 
 func Dump(w io.Writer, err error) {

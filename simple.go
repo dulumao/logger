@@ -11,6 +11,7 @@ import (
 
 	"github.com/ansel1/merry"
 	"github.com/davecgh/go-spew/spew"
+	"github.com/hokaccha/go-prettyjson"
 )
 
 type LogLevel int
@@ -258,6 +259,34 @@ function[%s] file[%s] line[%d]
 --------------------------------------------------------------------------------
 %s--------------------------------------------------------------------------------
 `, runtime.FuncForPC(pc).Name(), filename, linenr, spew.Sdump(vars...))
+}
+
+// JSStdout json dump
+func JSStdout(i ...interface{}) {
+	var formatter = prettyjson.NewFormatter()
+
+	fmt.Println()
+
+	formatter.Indent = 4
+
+	for _, v := range i {
+		if s, err := formatter.Marshal(v); err == nil {
+			fmt.Print(string(s))
+		} else {
+			fmt.Errorf("%s", err.Error())
+		}
+		//buffer := &bytes.Buffer{}
+		//encoder := json.NewEncoder(buffer)
+		//encoder.SetEscapeHTML(false)
+		//encoder.SetIndent("", "\t")
+		//if err := encoder.Encode(v); err == nil {
+		//	fmt.Print(buffer.String())
+		//} else {
+		//	fmt.Errorf("%s", err.Error())
+		//}
+	}
+
+	fmt.Println()
 }
 
 func Dump(w io.Writer, err error) {
